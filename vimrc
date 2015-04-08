@@ -80,6 +80,8 @@ set expandtab
 set smarttab
 set shiftwidth=4
 set tabstop=4
+set noswapfile 
+set autoread
 
 autocmd FileType ruby,eruby set shiftwidth=2 tabstop=2
 
