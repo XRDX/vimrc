@@ -1,70 +1,54 @@
 set nocompatible              " be iMproved, required
+
+""""""""""""""""""""""""""""""
+" Vundle
+""""""""""""""""""""""""""""""
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to
+
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-" call vundle#begin('~/some/path/here')
 
-" let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
+Plugin 'XRDX/vim-color'
+Plugin 'scrooloose/nerdtree'
+Plugin 'vim-syntastic/syntastic'
+Plugin 'jlanzarotta/bufexplorer'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'briancollins/vim-jst'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-" Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-" Plugin 'L9'
-" Git plugin not hosted on GitHub
-" Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-" Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-" Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Avoid a name conflict with L9
-" Plugin 'user/L9', {'name': 'newL9'}
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'tpope/vim-rails'
-Plugin 'lambdalisue/vim-fullscreen'
-Plugin 'wombat256.vim'
-Plugin 'wombat.vim'
-" All of your Plugins must be added before the following line
 call vundle#end()            " required
 
 syntax on
 filetype indent plugin on    " required
-" To ignore plugin indent changes, instead use:
-" filetype plugin on
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just
-" :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to
-" auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
 
+""""""""""""""""""""""""""""""
+" Basic Setting
+""""""""""""""""""""""""""""""
 if has("gui_running")
-    let g:isGUI = 1
+  let g:isGUI = 1
 else
-    let g:isGUI = 0
+  let g:isGUI = 0
 endif
 
+colorscheme xrdcolor
+
 if(g:isGUI)
-    colorscheme wombat256mod
-    set guioptions-=T
+  set guioptions-=T
+  set guioptions-=b
+  set guioptions-=L
+  set guioptions-=r
 endif
 
 set backspace=indent,eol,start
-set history=50		" keep 50 lines of command line history
-set ruler		" show the cursor position all the time
-" set showcmd		" display incomplete commands
-set incsearch		" do incremental searching
+set history=50		            " keep 50 lines of command line history
+set ruler		                  " show the cursor position all the time
+set incsearch		              " do incremental searching
 set nu
 set shortmess=arI
 set autoindent
@@ -72,46 +56,148 @@ set lz
 set hid
 set nohlsearch
 set ignorecase
+set smartcase
 set magic
 set nobackup
 set ai
 set si
 set expandtab
 set smarttab
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
+set noswapfile 
+set autoread
+set cursorline
+set clipboard=unnamed
+set t_Co=256
 
-autocmd FileType ruby,eruby set shiftwidth=2 tabstop=2
+au FileType text setlocal textwidth=78
 
+set omnifunc=syntaxcomplete#Complete
 
-" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
-" so that you can undo CTRL-U after inserting a line break.
-inoremap <C-Enter> <esc>o
-inoremap <S-Enter> <enter><esc>O
-autocmd FileType eruby inoremap <% <%<space>%><esc>hhi
+""""""""""""""""""""""""""""""
+" change the cursor in terminal "
+""""""""""""""""""""""""""""""
+" http://vim.wikia.com/wiki/Change_cursor_shape_in_different_modes
 
+if has("autocmd")
+  au VimEnter,InsertLeave * silent execute '!echo -ne "\e[2 q"' | redraw!
+  au InsertEnter,InsertChange *
+    \ if v:insertmode == 'i' | 
+    \   silent execute '!echo -ne "\e[6 q"' | redraw! |
+    \ elseif v:insertmode == 'r' |
+    \   silent execute '!echo -ne "\e[4 q"' | redraw! |
+    \ endif
+  au VimLeave * silent execute '!echo -ne "\e[ q"' | redraw!
+endif
+
+if exists('$ITERM_PROFILE')
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+""""""""""""""""""""""""""""""
+" mapleader
+""""""""""""""""""""""""""""""
+let mapleader = ';'
+
+nmap <leader>w :w<cr>
+nmap <leader>q :q<cr>
+nmap <leader>d :bn<cr>:bd#<cr>
+
+""""""""""""""""""""""""""""""
+" Nead Tree
+""""""""""""""""""""""""""""""
+let g:netrw_winsize = 30
+map <F2> :NERDTreeToggle<cr>
+nmap <leader>2 :NERDTreeToggle<cr>
+
+""""""""""""""""""""""""""""""
+" You complete me
+""""""""""""""""""""""""""""""
+" sudo apt-get install vim
+" sudo apt-get install vim-youcompleteme
+" sudo apt-get install vim-addon-manager
+" vam install youcompleteme
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_autoclose_preview_window_after_insertion = 1
+nmap <leader>g :YcmCompleter GoTo<CR>
+
+""""""""""""""""""""""""""""""
+" ctags
+""""""""""""""""""""""""""""""
+" ctags -R --fields=+l
+" ctags for ruby
+" ctags -R --languages=ruby *
+
+""""""""""""""""""""""""""""""
+" BufExplorer
+""""""""""""""""""""""""""""""
+let g:bufExplorerDisableDefaultKeyMapping=1    " Disable mapping.
+let g:bufExplorerDefaultHelp=0       " Do not show default help.
+let g:bufExplorerShowRelativePath=1  " Show relative paths.
+let g:bufExplorerSplitVertSize=30         " New split window is n columns wide.
+let g:bufExplorerSortBy='mru'        " Sort by most recently used.
+nmap <leader>b :BufExplorerVerticalSplit<cr>
+
+""""""""""""""""""""""""""""""
+" fold setting
+""""""""""""""""""""""""""""""
+set foldmethod=indent
+set foldlevelstart=20
+nmap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+
+"""""""""""""""""""""""""
+" Mouse
+"""""""""""""""""""""""""
 " In many terminal emulators the mouse works just fine, thus enable it.
 if has('mouse')
   set mouse=a
 endif
 
-" For all text files set 'textwidth' to 78 characters.
-autocmd FileType text setlocal textwidth=78
 
-" When editing a file, always jump to the last known cursor position.
-" Don't do it when the position is invalid or when inside an event handler
-" (happens when dropping a file on gvim).
-" Also don't do it when the mark is in the first line, that is the default
-" position when opening a file.
+"""""""""""""""""""""""""
+" Last cursor position
+"""""""""""""""""""""""""
 autocmd BufReadPost *
-  \ if line("'\"") > 1 && line("'\"") <= line("$") |
-  \   exe "normal! g`\"" |
-  \ endif
+      \ if line("'\"") > 1 && line("'\"") <= line("$") |
+      \   exe "normal! g`\"" |
+      \ endif
 
-" Convenient command to see the difference between the current buffer and the
-" file it was loaded from, thus the changes you made.
-" Only define it when not defined already.
-if !exists(":DiffOrig")
-  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-		  \ | wincmd p | diffthis
-endif
+"""""""""""""""""""""""""
+" XTerm
+"""""""""""""""""""""""""
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+"""""""""""""""""""""""""
+" Quickfix
+"""""""""""""""""""""""""
+" Automatically open, but do not go to (if there are errors) the quickfix /
+" location list window, or close it when is has become empty.
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
+
+"""""""""""""""""""""""""
+" syntastic
+"""""""""""""""""""""""""
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_eslint_exec = 'eslint_d'
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height = 5
+
