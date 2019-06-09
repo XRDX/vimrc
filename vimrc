@@ -21,6 +21,7 @@ Plugin 'vim-syntastic/syntastic'
 Plugin 'jlanzarotta/bufexplorer'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'briancollins/vim-jst'
+Plugin 'ervandew/supertab'
 
 call vundle#end()            " required
 
