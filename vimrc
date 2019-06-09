@@ -3,6 +3,7 @@ set nocompatible              " be iMproved, required
 """"""""""""""""""""""""""""""
 " Vundle
 """"""""""""""""""""""""""""""
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 " Brief help
 " :PluginList       - lists configured plugins
 " :PluginInstall    - installs plugins; append `!` to update or just
